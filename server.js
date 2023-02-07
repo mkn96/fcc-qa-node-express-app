@@ -30,7 +30,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 myDB(async (client) => {
-  const myDataBase = await client.db('advancednode_users').collection('users');
+  const myDataBase = await client.db('database').collection('users');
 
   app.route('/').get((req, res) => {
     res.render('pug', {
