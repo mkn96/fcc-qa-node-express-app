@@ -9,7 +9,8 @@ const myDB = require('./connection');
 const fccTesting = require('./freeCodeCamp/fcctesting.js');
 
 const app = express();
-
+const MongoStore = require('connect-mongo')(session);
+const URI = process.env.MONGO_URI;
 fccTesting(app); // For FCC testing purposes
 app.use('/public', express.static(process.cwd() + '/public'));
 app.use(express.json());
