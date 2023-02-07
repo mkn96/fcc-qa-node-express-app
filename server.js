@@ -72,7 +72,7 @@ myDB(async client => {
 let uri = 
     "mongodb+srv://mkn:" + 
     process.env.PW + 
-    '@cluster0.iainz.mongodb.net/?retryWrites=true&w=majority';
+    "@cluster0.iainz.mongodb.net/?retryWrites=true&w=majority";
 
 myDB(async client => {
   const myDataBase = await client.db('advancednode_users').collection('users');
