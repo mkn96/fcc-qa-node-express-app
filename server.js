@@ -14,7 +14,7 @@ app.use(express.urlencoded({ extended: true }));
 app.set('view engine', 'pug');
 app.set('views', './views/pug');
 
-let session = require('express_session');
+let session = require('express-session');
 let passport = require('passport');
 
 app.use(session({
@@ -22,7 +22,10 @@ app.use(session({
   resave: true,
   saveUninitialized: true,
   cookie: { secure: false }
-}), passport.initialize(), passport.session());
+}));
+
+app.use(passport.initialize());
+app.use(passport.session());
 
 app.route('/').get((req, res) => {
 res.render('index', { title: 'Hello', message: 'Please log in' });
