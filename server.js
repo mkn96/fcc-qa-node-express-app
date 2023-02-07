@@ -48,8 +48,47 @@ passport.deserializeUser((id, done) => {
     done(null, null);
   });
 });
+myDB(async client => {
+  const myDataBase = await client.db('database').collection('users');
 
-let uri = 'mongodb+srv://mkn:' + process.env.PW + '@cluster0.iainz.mongodb.net/advancednode_users?retryWrites=true&w=majority';
-mongo.connect(uri, (error, data) => {
-  
-})
+  // Be sure to change the title
+  app.route('/').get((req, res) => {
+    // Change the response to render the Pug template
+    res.render('index', {
+      title: 'Connected to Database',
+      message: 'Please login'
+    });
+  });
+
+  // Serialization and deserialization here...
+
+  // Be sure to add this...
+}).catch(e => {
+  app.route('/').get((req, res) => {
+    res.render('index', { title: e, message: 'Unable to connect to database' });
+  });
+});
+// app.listen out here...
+let uri = 'mongodb+srv://mkn:' + process.env.PW + '@cluster0.iainz.mongodb.net/?retryWrites=true&w=majority';
+
+myDB(async client => {
+  const myDataBase = await client.db('advancednode_users').collection('users');
+
+  // Be sure to change the title
+  app.route('/').get((req, res) => {
+    // Change the response to render the Pug template
+    res.render('index', {
+      title: 'Connected to Database',
+      message: 'Please login'
+    });
+  });
+
+  // Serialization and deserialization here...
+
+  // Be sure to add this...
+}).catch(e => {
+  app.route('/').get((req, res) => {
+    res.render('index', { title: e, message: 'Unable to connect to database' });
+  });
+});
+// app.listen out here...
