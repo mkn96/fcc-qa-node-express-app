@@ -16,7 +16,8 @@ app.set('views', './views/pug');
 
 let session = require('express-session');
 let passport = require('passport');
-let ObjectID = require('mongodb')
+let ObjectID = require('mongodb');
+const mongo = require('mongodb').MongoClient;
 
 app.use(session({
   secret: process.env.SESSION_SECRET,
@@ -47,3 +48,8 @@ passport.deserializeUser((id, done) => {
     done(null, null);
   });
 });
+
+let uri = 'mongodb+srv://mkn:' + process.env.PW + '@cluster0.iainz.mongodb.net/advancednode_users?retryWrites=true&w=majority';
+mongo.connect(uri, (error, data) => {
+  
+})
