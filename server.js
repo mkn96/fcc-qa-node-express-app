@@ -13,7 +13,9 @@ const URI = process.env.MONGO_URI;
 const bcrypt = require("bcrypt");
 const http = require("http").createServer(app);
 const io = require("socket.io")(http);
-let passportSocketIo = require("passport.socketio")
+const sessionStore = new.Session
+var cookieParser = require('cookie-parser');
+let passportSocketIo = require("passport.socketio");
 
 fccTesting(app); // For FCC testing purposes
 app.use("/public", express.static(process.cwd() + "/public"));
