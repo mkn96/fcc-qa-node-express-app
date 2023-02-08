@@ -10,10 +10,14 @@ module.exports = function (app, myDataBase) {
     });
   });
 
-  app.route('/auth/github');
-  app.route('/auth/github/callback');
-  
-  
+  app.route("/auth/github").get(passport.authenticate("github"));
+
+  app
+    .route("/auth/github/callback")
+    .get(passport.authenticate("github"), (req, res) => {
+      res.redirect("/profile");
+    });
+
   app
     .route("/login")
     .post(
