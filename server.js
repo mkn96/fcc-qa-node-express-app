@@ -50,6 +50,9 @@ myDB(async (client) => {
       done(null, doc);
     });
   });
+  
+  app.route('login').post()
+  
   passport.use(new LocalStrategy((username, password, done) => {
   myDataBase.findOne({ username: username }, (err, user) => {
     console.log(`User ${username} attempted to log in.`);
@@ -58,7 +61,7 @@ myDB(async (client) => {
     if (password !== user.password) return done(null, false);
     return done(null, user);
   });
-}));
+}));  
 }).catch((e) => {
   app.route("/").get((req, res) => {
     res.render("pug", { title: e, message: "Unable to login" });
@@ -68,3 +71,4 @@ myDB(async (client) => {
 app.listen(process.env.PORT || 3000, () => {
   console.log("Listening on port " + process.env.PORT);
 });
+
