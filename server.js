@@ -40,12 +40,21 @@ myDB(async (client) => {
   const myDataBase = await client.db("database").collection("users");
   routes(app, myDataBase);
   auth(app, myDataBase);
+  
+  let currentUsers = 0;
+  io.on('connection', socket => {
+    ++currentUsers;
+    io.emit('user count', currentUsers);
+
+    
+  console.log('A user has connected');
+});
 }).catch((e) => {
   app.route("/").get((req, res) => {
     res.render("pug", { title: e, message: "Unable to login" });
   });
 });
 
-app.http(process.env.PORT || 3000, () => {
+http.listen(process.env.PORT || 3000, () => {
   console.log("Listening on port " + process.env.PORT);
 });
