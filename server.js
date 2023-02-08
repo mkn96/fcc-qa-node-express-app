@@ -3,7 +3,7 @@ require("dotenv").config();
 const express = require("express");
 const session = require("express-session");
 const passport = require("passport");
-const LocalStrategy = require('passport-local');
+const LocalStrategy = require("passport-local");
 const ObjectID = require("mongodb").ObjectID;
 const myDB = require("./connection");
 const fccTesting = require("./freeCodeCamp/fcctesting.js");
@@ -37,7 +37,8 @@ myDB(async (client) => {
     res.render("pug", {
       title: "Connected to Database",
       message: "Please login",
-      showLogin: true
+      showLogin: true,
+      showRegistration: true
     });
   });
 
@@ -50,34 +51,49 @@ myDB(async (client) => {
       done(null, doc);
     });
   });
-  
-  app.route('/login').post(passport.authenticate('local', { failureRedirect: '/' }),
-     (req, res ) => {
-    res.redirect("/profile");
-     })
-  
+
   app
- .route('/profile')
- .get(ensureAuthenticated, (req,res) => {
-    res.render('profile');
- });
-  
-  function ensureAuthenticated(req, res, next) {
-  if (req.isAuthenticated()) {
-    return next();
-  }
-  res.redirect('/');
-};
-  
-  passport.use(new LocalStrategy((username, password, done) => {
-  myDataBase.findOne({ username: username }, (err, user) => {
-    console.log(`User ${username} attempted to log in.`);
-    if (err) return done(err);
-    if (!user) return done(null, false);
-    if (password !== user.password) return done(null, false);
-    return done(null, user);
+    .route("/login")
+    .post(
+      passport.authenticate("local", { failureRedirect: "/" }),
+      (req, res) => {
+        res.redirect("/profile");
+      }
+    );
+
+  app.route("/profile").get(ensureAuthenticated, (req, res) => {
+    res.render(process.cwd() + "/views/pug/profile", {
+      username: req.user.username,
+    });
   });
-}));  
+
+  function ensureAuthenticated(req, res, next) {
+    if (req.isAuthenticated()) {
+      return next();
+    }
+    res.redirect("/");
+  }
+
+  app.route("/logout").get((req, res) => {
+    req.logout();
+    res.redirect("/");
+  });
+
+  app.use((req, res, next) => {
+    res.status(404).type("text").send("Not Found");
+  });
+
+  passport.use(
+    new LocalStrategy((username, password, done) => {
+      myDataBase.findOne({ username: username }, (err, user) => {
+        console.log(`User ${username} attempted to log in.`);
+        if (err) return done(err);
+        if (!user) return done(null, false);
+        if (password !== user.password) return done(null, false);
+        return done(null, user);
+      });
+    })
+  );
 }).catch((e) => {
   app.route("/").get((req, res) => {
     res.render("pug", { title: e, message: "Unable to login" });
@@ -87,4 +103,3 @@ myDB(async (client) => {
 app.listen(process.env.PORT || 3000, () => {
   console.log("Listening on port " + process.env.PORT);
 });
-
