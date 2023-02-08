@@ -10,7 +10,7 @@ const fccTesting = require("./freeCodeCamp/fcctesting.js");
 const app = express();
 const MongoStore = require("connect-mongo")(session);
 const URI = process.env.MONGO_URI;
-const bcrypt = require('bcrypt');
+const bcrypt = require("bcrypt");
 
 fccTesting(app); // For FCC testing purposes
 app.use("/public", express.static(process.cwd() + "/public"));
@@ -31,18 +31,14 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 
+const routes = require("./routes.js");
+const auth = require("./auth.js");
+
 myDB(async (client) => {
   const myDataBase = await client.db("database").collection("users");
-
-  app.route("/").get((req, res) => {
-    res.render("pug", {
-      title: "Connected to Database",
-      message: "Please login",
-      showLogin: true,
-      showRegistration: true,
-    });
-  });
-
+  routes(app, myDataBase);
+  auth(app, myDataBase);
+  
   passport.serializeUser((user, done) => {
     done(null, user._id);
   });
@@ -53,22 +49,7 @@ myDB(async (client) => {
     });
   });
 
-  app
-    .route("/login")
-    .post(
-      passport.authenticate("local", { failureRedirect: "/" }),
-      (req, res) => {
-        res.redirect("/profile");
-      }
-    );
-
-  app.route("/profile").get(ensureAuthenticated, (req, res) => {
-    res.render(process.cwd() + "/views/pug/profile", {
-      username: req.user.username,
-    });
-  });
-
-  function ensureAuthenticated(req, res, next) {
+    function ensureAuthenticated(req, res, next) {
     if (req.isAuthenticated()) {
       return next();
     }
@@ -78,7 +59,7 @@ myDB(async (client) => {
   app.route("/register").post(
     (req, res, next) => {
       const hash = bcrypt.hashSync(req.body.password, 12);
-      
+
       myDataBase.findOne({ username: req.body.username }, (err, user) => {
         if (err) {
           next(err);
@@ -124,7 +105,8 @@ myDB(async (client) => {
         console.log(`User ${username} attempted to log in.`);
         if (err) return done(err);
         if (!user) return done(null, false);
-        if (!bcrypt.compareSync(password, user.password)) return done(null, false);
+        if (!bcrypt.compareSync(password, user.password))
+          return done(null, false);
         return done(null, user);
       });
     })
