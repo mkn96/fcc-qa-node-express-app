@@ -11,6 +11,8 @@ const app = express();
 const MongoStore = require("connect-mongo")(session);
 const URI = process.env.MONGO_URI;
 const bcrypt = require("bcrypt");
+const http = require("http").createServer(app);
+const io = require("socket.io")(http);
 
 fccTesting(app); // For FCC testing purposes
 app.use("/public", express.static(process.cwd() + "/public"));
@@ -44,6 +46,6 @@ myDB(async (client) => {
   });
 });
 
-app.listen(process.env.PORT || 3000, () => {
+app.http(process.env.PORT || 3000, () => {
   console.log("Listening on port " + process.env.PORT);
 });
