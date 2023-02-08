@@ -13,9 +13,8 @@ const URI = process.env.MONGO_URI;
 const bcrypt = require("bcrypt");
 const http = require("http").createServer(app);
 const io = require("socket.io")(http);
-const sessionStore = new.Session
-var cookieParser = require('cookie-parser');
-let passportSocketIo = require("passport.socketio");
+const cookieParser = require('cookie-parser');
+const passportSocketIo = require("passport.socketio");
 
 fccTesting(app); // For FCC testing purposes
 app.use("/public", express.static(process.cwd() + "/public"));
@@ -54,6 +53,7 @@ http.listen(process.env.PORT || 3000, () => {
   console.log("Listening on port " + process.env.PORT);
   
    let io = require("socket.io")(http);
+  
    let currentUsers = 0;
   io.on("connection", (socket) => {
     console.log("A user has connected");
